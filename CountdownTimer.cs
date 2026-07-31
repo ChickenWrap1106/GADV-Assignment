@@ -4,11 +4,19 @@ using TMPro; // Required for TextMeshPro
 public class CountdownTimer : MonoBehaviour
 {
     [Header("Timer Settings")]
-    [SerializeField] private float timeRemaining = 60f; // Set starting time in seconds
+    [SerializeField] private float timeRemaining = 60f; // Starting time in seconds
     [SerializeField] private bool timerIsRunning = true;
 
     [Header("UI Elements")]
     [SerializeField] private TextMeshProUGUI timeText;
+
+    [Header("End Message")]
+    [SerializeField] private GameObject endMessagePrefab; // Assign a prefab with TextMeshProUGUI
+    [SerializeField] private Transform canvasTransform;   // Where to spawn (usually your Canvas)
+
+    // Event declaration so other scripts can react when timer ends
+    public delegate void TimerEnded();
+    public event TimerEnded OnTimerEndEvent;
 
     private void Update()
     {
@@ -16,7 +24,6 @@ public class CountdownTimer : MonoBehaviour
         {
             if (timeRemaining > 0)
             {
-                // Subtract the time passed since the last frame
                 timeRemaining -= Time.deltaTime;
                 DisplayTime(timeRemaining);
             }
@@ -26,23 +33,30 @@ public class CountdownTimer : MonoBehaviour
                 timeRemaining = 0;
                 timerIsRunning = false;
                 DisplayTime(timeRemaining);
-                OnTimerEnd();
+
+                // Fire event
+                OnTimerEndEvent?.Invoke();
+
+                // Spawn text
+                SpawnEndMessage();
             }
         }
     }
 
     private void DisplayTime(float timeToDisplay)
     {
-        // Calculate minutes and seconds
-        float minutes = Mathf.FloorToInt(timeToDisplay / 60); 
+        float minutes = Mathf.FloorToInt(timeToDisplay / 60);
         float seconds = Mathf.FloorToInt(timeToDisplay % 60);
 
-        // Format string as "00:00"
         timeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
-    private void OnTimerEnd()
+    private void SpawnEndMessage()
     {
-        // Add your custom logic here (e.g., Load Game Over Scene, PlayerDeath(), etc.)
+        if (endMessagePrefab != null && canvasTransform != null)
+        {
+            GameObject msg = Instantiate(endMessagePrefab, canvasTransform);
+            msg.GetComponent<TextMeshProUGUI>().text = "Time’s Up!";
+        }
     }
 }
