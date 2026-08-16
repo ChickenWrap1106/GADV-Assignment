@@ -1,18 +1,18 @@
 using UnityEngine;
-using TMPro; // Required for TextMeshPro
+using TMPro; 
+using UnityEngine.SceneManagement; // <-- Add this
 
 public class CountdownTimer : MonoBehaviour
 {
     [Header("Timer Settings")]
-    [SerializeField] private float timeRemaining = 60f; // Starting time in seconds
+    [SerializeField] private float timeRemaining = 60f; 
     [SerializeField] private bool timerIsRunning = true;
 
     [Header("UI Elements")]
     [SerializeField] private TextMeshProUGUI timeText;
 
-    [Header("End Message")]
-    [SerializeField] private GameObject endMessagePrefab; // Assign a prefab with TextMeshProUGUI
-    [SerializeField] private Transform canvasTransform;   // Where to spawn (usually your Canvas)
+    [Header("End Scene Settings")]
+    [SerializeField] private int endSceneIndex = 1; // Scene index to load when time runs out
 
     // Event declaration so other scripts can react when timer ends
     public delegate void TimerEnded();
@@ -37,8 +37,8 @@ public class CountdownTimer : MonoBehaviour
                 // Fire event
                 OnTimerEndEvent?.Invoke();
 
-                // Spawn text
-                SpawnEndMessage();
+                // Load scene instead of spawning prefab
+                LoadEndScene();
             }
         }
     }
@@ -51,12 +51,8 @@ public class CountdownTimer : MonoBehaviour
         timeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
-    private void SpawnEndMessage()
+    private void LoadEndScene()
     {
-        if (endMessagePrefab != null && canvasTransform != null)
-        {
-            GameObject msg = Instantiate(endMessagePrefab, canvasTransform);
-            msg.GetComponent<TextMeshProUGUI>().text = "Time’s Up!";
-        }
+        SceneManager.LoadScene(endSceneIndex);
     }
 }

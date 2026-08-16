@@ -4,7 +4,7 @@ public class Spawner : MonoBehaviour
 {
     [Header("Spawning Settings")]
     public GameObject itemPrefab; // The item you want to spawn
-    public float spawnInterval = 2f; // Time between spawns
+    public float spawnInterval = 5f; // Time between spawns
 
     private BoxCollider2D spawnArea;
     private float nextSpawnTime;

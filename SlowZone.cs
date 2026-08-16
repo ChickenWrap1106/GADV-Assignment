@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SlowZone : MonoBehaviour
 {
-    public float slowSpeed = 5f;
+    public float slowSpeed = 2f;
 
     private void OnTriggerEnter2D(Collider2D other)
     {

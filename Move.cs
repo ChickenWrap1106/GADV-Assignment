@@ -1,31 +1,29 @@
 using UnityEngine;
-
-public class Move : MonoBehaviour
+ 
+public class PathFollower : MonoBehaviour
 {
-    public float moveSpeed = 1f; 
-    public float moveLimit = 3f;   
-
-    private Vector3 startPos;
-    private int direction = 1;       
-
-    void Start()
-    {
-        startPos = transform.position;
-    }
-
+    public Transform[] waypoints;   // This will show in Inspector
+    public float speed = 5f;
+    private int currentIndex = 0;
+ 
     void Update()
     {
-  
-        
-            // Move up and down
-            transform.position += new Vector3(direction * moveSpeed * Time.deltaTime, 0, 0);
-
-            // Check if object needs to change direction
-            if (Mathf.Abs(transform.position.x - startPos.x) >= moveLimit)
+        if (waypoints.Length == 0) return;
+ 
+        Transform target = waypoints[currentIndex];
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            target.position,
+            speed * Time.deltaTime
+        );
+ 
+        if (Vector3.Distance(transform.position, target.position) < 0.1f)
+        {
+            currentIndex++;
+            if (currentIndex >= waypoints.Length)
             {
-                direction *= -1; 
+                currentIndex = 0; // Loop back
             }
-        
+        }
     }
-
 }
